@@ -8,16 +8,14 @@ using Tyket.Parser.Model;
 
 DateTime start = DateTime.Now;
 
-string url = "https://staging.media.tyket.app/";
-string filename = "dotnet-test-data.json.gz";
+string url = "https://staging.media.tyket.app/dotnet-test-data.json.gz";
 
 long total = 0, totalFlorida=0;
 double sumIncomeFlorida=0;
 ContactModel highestContact = new ContactModel() { Yearly_Income = double.MinValue };
 
-using (WebClient client = new WebClient())
-client.DownloadFile($"{url}{filename}", filename);
-using (System.IO.Stream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
+HttpClient httpClient = new HttpClient();
+using (System.IO.Stream fs = await httpClient.GetStreamAsync(url))
 using (GZipInputStream gzipStream = new GZipInputStream(fs))
 using (StreamReader streamReader = new StreamReader(gzipStream))
 using (JsonTextReader reader = new JsonTextReader(streamReader))
